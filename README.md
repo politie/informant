@@ -1,6 +1,6 @@
-# `reporter`
+# Informant
 
-Reporter is a simple and fast logging library for Node.js and browser JavaScript applications. It is hierarchical, supports multiple handlers and includes special support for Errors created with the the `verror` package (see also `BaseError` in this package for easy subclassing in TypeScript).
+Informant is a simple and fast logging library for Node.js and browser JavaScript applications, built with TypeScript. It is hierarchical, supports multiple handlers and includes special support for Errors created with the the `verror` package (see also `BaseError` in this package for easy subclassing in TypeScript).
 
 
 ## Introduction
@@ -11,7 +11,7 @@ Like most logging libraries you get a Logger instance and call methods named aft
 
 ```typescript
 // myComponent.ts
-import { Logger } from '@politie/reporter';
+import { Logger } from '@politie/informant';
 
 const logger = Logger.get('myLibrary.myComponent');
 logger.info('hi');
@@ -27,7 +27,7 @@ The logger hierarchy can be used to set LogLevels for whole subtrees of Loggers 
 
 ```typescript
 // application/index.ts
-import { registerLogHandler, consoleHandler, Logger, LogLevel } from '@politie/reporter';
+import { registerLogHandler, consoleHandler, Logger, LogLevel } from '@politie/informant';
 
 // Enable logging to the console.
 registerLogHandler(consoleHandler);
@@ -169,7 +169,7 @@ There are a number of convenience methods that can construct LogHandlers from ot
     Use this to only handle records for the provided level or above. For example to only show messages with level warning and above in the console, use:
 
     ```typescript
-    import { consoleHandler, fromLevel, LogLevel, registerLogHandler } from '@politie/reporter';
+    import { consoleHandler, fromLevel, LogLevel, registerLogHandler } from '@politie/informant';
 
     registerLogHandler(fromLevel(LogLevel.warning, consoleHandler));
     ```
@@ -179,7 +179,7 @@ There are a number of convenience methods that can construct LogHandlers from ot
     Use this to only handle records for the provided logger or any of its children. For example to only show messages for the library named `core`, use:
 
     ```typescript
-    import { consoleHandler, forLogger, registerLogHandler } from '@politie/reporter';
+    import { consoleHandler, forLogger, registerLogHandler } from '@politie/informant';
 
     registerLogHandler(forLogger('core', consoleHandler));
     ```
@@ -189,7 +189,7 @@ There are a number of convenience methods that can construct LogHandlers from ot
     This wrapper calls the provided LogHandler as soon as possible, but at least after the current stack finishes (i.e. asynchronously).
 
     ```typescript
-    import { consoleHandler, async, registerLogHandler } from '@politie/reporter';
+    import { consoleHandler, async, registerLogHandler } from '@politie/informant';
 
     registerLogHandler(async(consoleHandler));
     ```
@@ -199,7 +199,7 @@ There are a number of convenience methods that can construct LogHandlers from ot
     An efficient RingBuffer implementation that can be used to record the last X records and fetch them when an error occurs or during a debug-session.
 
     ```typescript
-    import { ringBuffer, registerLogHandler } from '@politie/reporter';
+    import { ringBuffer, registerLogHandler } from '@politie/informant';
 
     const buffer = ringBuffer(50);  // Record the last 50 records
     registerLogHandler(buffer);
@@ -214,7 +214,7 @@ There are a number of convenience methods that can construct LogHandlers from ot
 
 # Decorators
 
-Reporter provides two method-decorators that can be used to quickly add performance measurements and tracing to existing methods.
+Informant provides two method-decorators that can be used to quickly add performance measurements and tracing to existing methods.
 
 - `@measure`
 
@@ -274,7 +274,7 @@ class MyError extends VError { }
 
 // MyError can be used as any VError, but the stack will contain the name MyError and the MyError class can be used in `instanceof` checks
 
-/** A custom error with specific structured information to automatically log when passed to a reporter Logger. */
+/** A custom error with specific structured information to automatically log when passed to a informant Logger. */
 class MyHttpError extends VError {
     constructor(requestId: number, message: string) {
         super({ info: { requestId } }, message);
