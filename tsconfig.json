@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "lib": [
+            "es2015",
+            "dom"
+        ],
+        "declaration": true,
+        "sourceMap": true,
+        "outDir": "dist",
+        "importHelpers": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "pretty": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "typings/**/*.d.ts"
+    ]
+}

@@ -1,0 +1,56 @@
+{
+    "name": "@politie/informant",
+    "version": "1.0.0-beta.0",
+    "description": "Informant is a simple and fast logging library for Node.js and browser JavaScript applications.",
+    "main": "dist/index.js",
+    "typings": "dist/index.d.ts",
+    "scripts": {
+        "preversion": "npm run build",
+        "clean": "rimraf .nyc_output coverage dist",
+        "build": "npm run clean && npm run test && npm run lint",
+        "tsc": "tsc",
+        "test": "npm run tsc && nyc --check-coverage --lines 98 --functions 98 --branches 98 --statements 98 --reporter html --reporter text-summary --include \"dist/**/*.js\" --exclude \"**/*.spec.js\" mocha --forbid-only \"dist/**/*.spec.js\"",
+        "posttest": "rimraf .nyc_output",
+        "watch": "nodemon --watch src --ext ts --exec npm run watch:run",
+        "watch:run": "nyc --reporter html --reporter text-summary --extension .ts --include \"src/**/*.ts\" --exclude \"src/**/*.spec.ts\" mocha --reporter landing --compilers ts:ts-node/register \"src/**/*.spec.ts\" && rimraf .nyc_output",
+        "lint": "tslint -p tsconfig.json --format codeFrame"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/politie/informant.git"
+    },
+    "keywords": [
+        "politie",
+        "logging",
+        "typescript"
+    ],
+    "author": "Dutch National Police",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/politie/informant/issues"
+    },
+    "homepage": "https://github.com/politie/informant#readme",
+    "dependencies": {
+        "@types/verror": "^1.10.3",
+        "marky": "^1.2.0",
+        "tslib": "^1.8.0",
+        "verror": "^1.10.0"
+    },
+    "devDependencies": {
+        "@types/chai": "^4.0.4",
+        "@types/mocha": "^2.2.44",
+        "@types/node": "^8.0.47",
+        "@types/sinon": "^2.3.7",
+        "@types/sinon-chai": "^2.7.29",
+        "chai": "^4.1.2",
+        "mocha": "^4.0.1",
+        "nodemon": "^1.12.1",
+        "nyc": "^11.2.1",
+        "rimraf": "^2.6.2",
+        "sinon": "^4.0.2",
+        "sinon-chai": "^2.14.0",
+        "ts-node": "^3.3.0",
+        "tslint": "^5.8.0",
+        "typescript": "^2.5.3"
+    }
+}
