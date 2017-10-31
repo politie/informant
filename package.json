@@ -4,8 +4,11 @@
     "description": "Informant is a simple and fast logging library for Node.js and browser JavaScript applications.",
     "main": "dist/index.js",
     "typings": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
     "scripts": {
-        "preversion": "npm run build",
+        "prepare": "npm run build",
         "clean": "rimraf .nyc_output coverage dist",
         "build": "npm run clean && npm run test && npm run lint",
         "tsc": "tsc",
