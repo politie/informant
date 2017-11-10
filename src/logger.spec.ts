@@ -66,7 +66,7 @@ describe('Logger', () => {
                 expect(recordLogger).to.equal(logger.name);
                 expect(message).to.equal('whatever');
                 expect(time.getTime()).to.be.at.most(Date.now(), 'time is in future');
-                expect(time.getTime()).to.be.at.least(Date.now() - 10, 'time is in past');
+                expect(time.getTime()).to.be.at.least(Date.now() - 100, 'time is in past');
             });
 
             it('should support additional details with a details argument', () => {
