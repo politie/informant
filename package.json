@@ -8,7 +8,7 @@
         "dist"
     ],
     "scripts": {
-        "prepare": "npm run build",
+        "prepack": "npm run build",
         "clean": "rimraf .nyc_output coverage dist",
         "build": "npm run clean && npm run test && npm run lint",
         "tsc": "tsc",
