@@ -1,7 +1,7 @@
 import { mark, stop } from 'marky';
 import { inspect, InspectOptions } from 'util';
 import { errorInfo, fullStack } from './errors';
-import { logHandlers } from './loghandler';
+import { consoleHandler, logHandlers, registerLogHandler } from './loghandler';
 import { levels, LogLevel, LogLevelName } from './loglevel';
 import { FormattedLogRecord, LogRecord } from './logrecord';
 
@@ -161,6 +161,12 @@ function createLogMethod(level: LogLevel): LogMethod {
         }
         if (arguments.length) {
             const record = createLogRecord.apply(this, arguments);
+
+            // If no log handlers are registered, default to consoleHandler.
+            if (logHandlers.length === 0) {
+                registerLogHandler(consoleHandler);
+            }
+
             for (const handler of logHandlers) {
                 handler(record);
             }

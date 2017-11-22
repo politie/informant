@@ -3,7 +3,7 @@ import * as marky from 'marky';
 import { spy, stub } from 'sinon';
 import { BaseError } from './errors';
 import { Logger } from './logger';
-import { captureLogging, registerLogHandler, unregisterLogHandler } from './loghandler';
+import { captureLogging, consoleHandler, logHandlers, registerLogHandler, unregisterLogHandler } from './loghandler';
 import { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel';
 import { LogRecord } from './logrecord';
 
@@ -378,6 +378,31 @@ describe('Logger', () => {
                 `RETURNS 'string 1337 [object Object]'`,
                 `RETURNS 'string 1337 [object Object] from func'`,
             ]);
+        });
+    });
+});
+
+describe('Logger', () => {
+    const called = stub();
+    let infoFn: any;
+    beforeEach(() => {
+        infoFn = console.info;
+        console.info = (args: any) => called(args);
+    });
+
+    afterEach(() => console.info = infoFn);
+
+    describe('without a registered logHandler', () => {
+        it('should default to consoleHandler', () => {
+            expect(logHandlers.length).to.equal(0);
+
+            const logger = Logger.get('withoutHandler');
+            logger.info('hello');
+
+            expect(logHandlers.length).to.equal(1);
+            expect(logHandlers[0]).to.equal(consoleHandler);
+
+            expect(called).to.have.been.calledWithMatch(/hello/);
         });
     });
 });
