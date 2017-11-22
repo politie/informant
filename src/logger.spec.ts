@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import * as marky from 'marky';
-import { spy, stub } from 'sinon';
+import { SinonStub, spy, stub } from 'sinon';
 import { BaseError } from './errors';
 import { Logger } from './logger';
 import { captureLogging, logHandlers, registerLogHandler, unregisterLogHandler } from './loghandler';
@@ -383,7 +383,8 @@ describe('Logger', () => {
 });
 
 describe('Logger', () => {
-    const consoleInfo = stub(console, 'info');
+    let consoleInfo: SinonStub;
+    beforeEach(() => consoleInfo = stub(console, 'info'));
     afterEach(() => consoleInfo.restore());
 
     describe('without a registered logHandler', () => {
