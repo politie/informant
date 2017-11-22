@@ -8,8 +8,6 @@ import { levels, LogLevel } from './loglevel';
 import { LogRecord } from './logrecord';
 
 describe('(un)registerLogHandler', () => {
-    beforeEach(() => logHandlers.forEach(handler => unregisterLogHandler(handler)));
-
     it('should add/remove the handler to/from the list of handlers', () => {
         const handler = stub();
         registerLogHandler(handler);
