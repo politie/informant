@@ -1,5 +1,7 @@
 # Informant
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/politie/informant.svg)](https://greenkeeper.io/)
+
 Informant is a simple and fast logging library for Node.js and browser JavaScript applications, built with TypeScript. It is hierarchical, supports multiple handlers and includes special support for Errors created with the the `verror` package (see also `BaseError` in this package for easy subclassing in TypeScript).
 
 
