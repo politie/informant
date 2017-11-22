@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import * as marky from 'marky';
-import { spy, stub } from 'sinon';
+import { SinonStub, spy, stub } from 'sinon';
 import { BaseError } from './errors';
 import { Logger } from './logger';
-import { captureLogging, registerLogHandler, unregisterLogHandler } from './loghandler';
+import { captureLogging, logHandlers, registerLogHandler, unregisterLogHandler } from './loghandler';
 import { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel';
 import { LogRecord } from './logrecord';
 
@@ -378,6 +378,23 @@ describe('Logger', () => {
                 `RETURNS 'string 1337 [object Object]'`,
                 `RETURNS 'string 1337 [object Object] from func'`,
             ]);
+        });
+    });
+});
+
+describe('Logger', () => {
+    let consoleInfo: SinonStub;
+    beforeEach(() => consoleInfo = stub(console, 'info'));
+    afterEach(() => consoleInfo.restore());
+
+    describe('without a registered logHandler', () => {
+        it('should default to consoleHandler', () => {
+            expect(logHandlers.length).to.equal(0);
+
+            const logger = Logger.get('withoutHandler');
+            logger.info('hello without a handler');
+
+            expect(consoleInfo).to.have.been.calledWithMatch(/hello without a handler/);
         });
     });
 });
