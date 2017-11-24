@@ -6,25 +6,25 @@ import sourcemaps from 'rollup-plugin-sourcemaps';
 import pkg from './package.json';
 
 export default [
-    // browser-friendly UMD build
+    // browser-friendly UMD build, mainly for StackBlitz support.
     {
         input: 'dist/index.js',
         output: {
             file: pkg.browser,
             format: 'umd'
         },
-        name: '@politie/informant',
+        name: 'informant',
         sourcemap: true,
         plugins: [
             sourcemaps(),
-            globals(),
-            builtins(),
-            resolve(),
             commonjs({
                 namedExports: {
                     'verror': ['errorForEach', 'errorFromList', 'info', 'fullStack', 'hasCauseWithName', 'findCauseByName', 'VError']
                 }
-            })
+            }),
+            globals(),
+            builtins(),
+            resolve(),
         ],
     },
 
@@ -39,12 +39,12 @@ export default [
         sourcemap: true,
         plugins: [
             sourcemaps(),
-            resolve(),
             commonjs({
                 namedExports: {
                     'verror': ['errorForEach', 'errorFromList', 'info', 'fullStack', 'hasCauseWithName', 'findCauseByName', 'VError']
                 }
-            })
+            }),
+            resolve(),
         ],
     }
 ];
