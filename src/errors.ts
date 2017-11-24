@@ -1,5 +1,8 @@
 import { inspect } from 'util';
-import { findCauseByName, fullStack, hasCauseWithName, info as errorInfo, Info as InfoObject, Options, VError } from 'verror';
+import { Info as InfoObject, Options, VError } from 'verror';
+
+export { InfoObject };
+export { errorForEach, errorFromList, findCauseByName, fullStack, hasCauseWithName, info as errorInfo } from 'verror';
 
 /**
  * BaseErrors can be used to create nice subclasses of Error.
@@ -32,34 +35,6 @@ export class BaseError extends VError {
 
     // Make sure the name of the Error equals the name of the Error constructor.
     get name() { return this.constructor.name; }
-
-    /**
-     * Get the structured information associated with this error, merged with information from its cause.
-     */
-    info(): InfoObject {
-        return errorInfo(this);
-    }
-
-    /**
-     * Get the full stack trace inclusing the cause chain.
-     */
-    fullStack(): string {
-        return fullStack(this);
-    }
-
-    /**
-     * Returns true iff this error of any of the errors in the cause chain has the specified name.
-     */
-    hasCauseWithName(name: string) {
-        return hasCauseWithName(this, name);
-    }
-
-    /**
-     * Find an error in the cause chain (including this error) that has the specified name.
-     */
-    findCauseByName(name: string) {
-        return findCauseByName(this, name);
-    }
 }
 
 function extractOptions(args: any[]): Options {
@@ -71,7 +46,3 @@ function extractOptions(args: any[]): Options {
         default: throw new Error('Invalid use of BaseError signature, got: ' + inspect(args, { depth: 0 }));
     }
 }
-
-export { findCauseByName, fullStack, hasCauseWithName, InfoObject, errorInfo };
-
-export { errorForEach, errorFromList } from 'verror';
