@@ -1,28 +1,30 @@
-import builtins from 'rollup-plugin-node-builtins';
-import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import builtins from 'rollup-plugin-node-builtins';
+import globals from 'rollup-plugin-node-globals';
+import resolve from 'rollup-plugin-node-resolve';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 import pkg from './package.json';
 
 export default [
-    // browser-friendly UMD build
+    // browser-friendly UMD build, mainly for StackBlitz support.
     {
         input: 'dist/index.js',
         output: {
             file: pkg.browser,
             format: 'umd'
         },
-        name: '@politie/informant',
+        name: 'informant',
         sourcemap: true,
         plugins: [
             sourcemaps(),
-            builtins(),
-            resolve(),
             commonjs({
                 namedExports: {
                     'verror': ['errorForEach', 'errorFromList', 'info', 'fullStack', 'hasCauseWithName', 'findCauseByName', 'VError']
                 }
-            })
+            }),
+            globals(),
+            builtins(),
+            resolve(),
         ],
     },
 
@@ -37,12 +39,12 @@ export default [
         sourcemap: true,
         plugins: [
             sourcemaps(),
-            resolve(),
             commonjs({
                 namedExports: {
                     'verror': ['errorForEach', 'errorFromList', 'info', 'fullStack', 'hasCauseWithName', 'findCauseByName', 'VError']
                 }
-            })
+            }),
+            resolve(),
         ],
     }
 ];

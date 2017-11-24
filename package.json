@@ -1,6 +1,6 @@
 {
     "name": "@politie/informant",
-    "version": "1.0.0-beta.1",
+    "version": "1.0.0-beta.3",
     "description": "Informant is a simple and fast logging library for Node.js and browser JavaScript applications.",
     "main": "dist/informant.cjs.js",
     "module": "dist/informant.esm.js",
@@ -61,6 +61,7 @@
         "rollup": "^0.51.8",
         "rollup-plugin-commonjs": "^8.2.6",
         "rollup-plugin-node-builtins": "^2.1.2",
+        "rollup-plugin-node-globals": "^1.1.0",
         "rollup-plugin-node-resolve": "^3.0.0",
         "rollup-plugin-sourcemaps": "^0.4.2",
         "sinon": "^4.0.2",
