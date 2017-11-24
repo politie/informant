@@ -29,7 +29,7 @@ export default [
     // CommonJS (for Node) and ES module (for bundlers) build.
     {
         input: 'dist/index.js',
-        external: ['util', 'tslib', 'verror', 'marky'],
+        external: ['util', 'tslib', 'assert', 'stream'],
         output: [
             { file: pkg.main, format: 'cjs' },
             { file: pkg.module, format: 'es' }
@@ -37,6 +37,12 @@ export default [
         sourcemap: true,
         plugins: [
             sourcemaps(),
+            resolve(),
+            commonjs({
+                namedExports: {
+                    'verror': ['errorForEach', 'errorFromList', 'info', 'fullStack', 'hasCauseWithName', 'findCauseByName', 'VError']
+                }
+            })
         ],
     }
 ];
