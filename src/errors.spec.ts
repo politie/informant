@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { BaseError } from './errors';
+import { BaseError, errorInfo, findCauseByName, fullStack, hasCauseWithName } from './errors';
 
 describe('BaseError', () => {
     it('should support aggregated info', () => {
         const err1 = new BaseError({ a: 1, b: 2 }, 'message');
         const err2 = new BaseError(err1, { b: 3, c: 4 }, 'message');
-        expect(err2.info()).to.deep.equal({ a: 1, b: 3, c: 4 });
+        expect(errorInfo(err2)).to.deep.equal({ a: 1, b: 3, c: 4 });
     });
 
     it('should support all signatures that are allowed by TypeScript', () => {
@@ -47,7 +47,7 @@ describe('BaseError', () => {
         const err1 = new BaseError('inner error');
         const err2 = new BaseError(err1, 'middle error');
         const err3 = new BaseError(err2, 'outer error');
-        expect(err3.fullStack()).to.match(new RegExp([
+        expect(fullStack(err3)).to.match(new RegExp([
             '^BaseError: outer error: middle error: inner error$',
             '[^]+',
             '^caused by: BaseError: middle error: inner error$',
@@ -78,21 +78,21 @@ describe('BaseError', () => {
         it('should provide the correct name and support findCauseByName', () => {
             expect(err.name).to.equal('BipedError');
             expect(err.constructor.name).to.equal('BipedError');
-            expect(err.hasCauseWithName('BipedError')).to.be.true;
-            expect(err.findCauseByName('BipedError')).to.exist;
-            expect(err.hasCauseWithName('QuadrupedError')).to.be.false;
-            expect(err.findCauseByName('QuadrupedError')).not.to.exist;
-            expect(new BaseError(err, 'wrapper').hasCauseWithName('BipedError')).to.be.true;
-            expect(new BaseError(err, 'wrapper').findCauseByName('BipedError')).to.exist;
-            expect(new BaseError(err, 'wrapper').hasCauseWithName('QuadrupedError')).to.be.false;
-            expect(new BaseError(err, 'wrapper').findCauseByName('QuadrupedError')).not.to.exist;
+            expect(hasCauseWithName(err, 'BipedError')).to.be.true;
+            expect(findCauseByName(err, 'BipedError')).to.exist;
+            expect(hasCauseWithName(err, 'QuadrupedError')).to.be.false;
+            expect(findCauseByName(err, 'QuadrupedError')).not.to.exist;
+            expect(hasCauseWithName(new BaseError(err, 'wrapper'), 'BipedError')).to.be.true;
+            expect(findCauseByName(new BaseError(err, 'wrapper'), 'BipedError')).to.exist;
+            expect(hasCauseWithName(new BaseError(err, 'wrapper'), 'QuadrupedError')).to.be.false;
+            expect(findCauseByName(new BaseError(err, 'wrapper'), 'QuadrupedError')).not.to.exist;
         });
 
         it('should show the correct stack information for subclasses', () => {
-            expect(err.fullStack()).to.not.contain('BaseError');
-            expect(err.fullStack()).to.match(/^BipedError: Encountered a human with 3 legs/);
+            expect(fullStack(err)).to.not.contain('BaseError');
+            expect(fullStack(err)).to.match(/^BipedError: Encountered a human with 3 legs/);
 
-            expect(new BipedError('a pair of humans', 5, err).fullStack()).to.match(new RegExp([
+            expect(fullStack(new BipedError('a pair of humans', 5, err))).to.match(new RegExp([
                 '^BipedError: Encountered a pair of humans with 5 legs: Encountered a human with 3 legs$',
                 '[^]+',
                 '^caused by: BipedError: Encountered a human with 3 legs$',
@@ -103,7 +103,7 @@ describe('BaseError', () => {
         it('should still support aggregated info', () => {
             const cause = new BaseError({ extraLegs: 1 }, 'grown an extra leg');
             const error = new BipedError('a man', 3, cause);
-            expect(error.info()).to.deep.equal({
+            expect(errorInfo(error)).to.deep.equal({
                 extraLegs: 1,
                 species: 'a man',
                 legs: 3,

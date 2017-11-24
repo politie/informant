@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as marky from 'marky';
 import { SinonStub, spy, stub } from 'sinon';
-import { BaseError } from './errors';
+import { BaseError, fullStack } from './errors';
 import { Logger } from './logger';
 import { captureLogging, logHandlers, registerLogHandler, unregisterLogHandler } from './loghandler';
 import { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel';
@@ -93,7 +93,7 @@ describe('Logger', () => {
                 const { details, message } = records[0];
                 expect(message).to.equal(String(outerError));
                 expect(details).to.deep.equal({
-                    stack: outerError.fullStack(),
+                    stack: fullStack(outerError),
                     requestId: 123,
                     graph: 'abc',
                 });
