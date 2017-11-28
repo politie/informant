@@ -3,6 +3,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import resolve from 'rollup-plugin-node-resolve';
 import sourcemaps from 'rollup-plugin-sourcemaps';
+import visualizer from 'rollup-plugin-visualizer';
 import pkg from './package.json';
 
 export default [
@@ -25,13 +26,14 @@ export default [
             globals(),
             builtins(),
             resolve(),
+            visualizer({ filename: `dist/stats.umd.html` }),
         ],
     },
 
     // CommonJS (for Node) and ES module (for bundlers) build.
     {
         input: 'dist/index.js',
-        external: ['util', 'tslib', 'assert', 'stream'],
+        external: ['util', 'tslib', 'assert', 'stream', 'core-util-is'],
         output: [
             { file: pkg.main, format: 'cjs' },
             { file: pkg.module, format: 'es' }
@@ -45,6 +47,7 @@ export default [
                 }
             }),
             resolve(),
+            visualizer({ filename: `dist/stats.html` }),
         ],
     }
 ];
