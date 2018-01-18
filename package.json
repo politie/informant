@@ -45,7 +45,7 @@
     "devDependencies": {
         "@types/chai": "^4.0.4",
         "@types/mocha": "^2.2.44",
-        "@types/node": "^8.0.47",
+        "@types/node": "^9.3.0",
         "@types/rollup": "^0.51.1",
         "@types/sinon": "^4.0.0",
         "@types/sinon-chai": "^2.7.29",
@@ -66,7 +66,7 @@
         "rollup-plugin-visualizer": "^0.3.1",
         "sinon": "^4.0.2",
         "sinon-chai": "^2.14.0",
-        "ts-node": "^3.3.0",
+        "ts-node": "^4.1.0",
         "tslint": "^5.8.0",
         "typescript": "^2.5.3",
         "verror": "^1.10.0"
