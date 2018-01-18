@@ -12,10 +12,10 @@ export default [
         input: 'dist/index.js',
         output: {
             file: pkg.browser,
-            format: 'umd'
+            format: 'umd',
+            name: 'informant',
+            sourcemap: true,
         },
-        name: 'informant',
-        sourcemap: true,
         plugins: [
             sourcemaps(),
             commonjs({
@@ -33,12 +33,12 @@ export default [
     // CommonJS (for Node) and ES module (for bundlers) build.
     {
         input: 'dist/index.js',
-        external: ['util', 'tslib', 'assert', 'stream', 'core-util-is'],
+        external: ['util', 'tslib', 'assert', 'stream'],
         output: [
-            { file: pkg.main, format: 'cjs' },
-            { file: pkg.module, format: 'es' }
+            { sourcemap: true, file: pkg.main, format: 'cjs' },
+            { sourcemap: true, file: pkg.module, format: 'es' }
         ],
-        sourcemap: true,
+
         plugins: [
             sourcemaps(),
             commonjs({
