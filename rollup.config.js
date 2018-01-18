@@ -33,7 +33,7 @@ export default [
     // CommonJS (for Node) and ES module (for bundlers) build.
     {
         input: 'dist/index.js',
-        external: ['util', 'tslib', 'assert', 'stream', 'core-util-is'],
+        external: ['util', 'tslib', 'assert', 'stream'],
         output: [
             { sourcemap: true, file: pkg.main, format: 'cjs' },
             { sourcemap: true, file: pkg.module, format: 'es' }
