@@ -128,7 +128,7 @@ context('decorators', () => {
             expect(() => {
                 class OnProperty {
                     @(decorator as PropertyDecorator)
-                    property: string;
+                    property?: string;
                 }
                 return OnProperty;
             }).to.throw(`@${name}() can only be used on method.`);
