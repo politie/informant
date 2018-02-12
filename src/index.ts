@@ -1,4 +1,4 @@
-export { deprecated, measure, trace } from './decorators';
+export { deprecated, trace } from './decorators';
 export { BaseError, errorForEach, errorFromList, errorInfo, findCauseByName, fullStack, hasCauseWithName, InfoObject } from './errors';
 export { Logger, LogMethod } from './logger';
 export {

@@ -1,13 +1,7 @@
-import { mark, stop } from 'marky';
-import { inspect, InspectOptions } from 'util';
 import { errorInfo, fullStack } from './errors';
 import { consoleHandler, logHandlers } from './loghandler';
 import { levels, LogLevel, LogLevelName } from './loglevel';
-import { FormattedLogRecord, LogRecord } from './logrecord';
-
-const measureInspectOptions: InspectOptions = { depth: 0 };
-
-let uniqueId = 0;
+import { LogRecord } from './logrecord';
 
 /**
  * Logger should be used to log messages and data. An instance of Logger can be scoped to a specific domain or component.
@@ -69,63 +63,13 @@ export class Logger {
     }
 
     /**
-     * Start a performance measurement, stops the measurement and logs when the returned callback is called. Does nothing when the
-     * LogLevel.performance is not enabled on the current Logger.
-     *
-     * @param name the name of the measurement
-     */
-    measure(name: string) {
-        if (!this.performance()) { return () => undefined; }
-        const uniqueName = `${name} ${uniqueId++}`;
-        let done = false;
-
-        mark(uniqueName);
-        return () => {
-            if (done) { return; }
-            done = true;
-            const { duration, startTime } = stop(uniqueName);
-            this.performance({ duration, startTime, name }, '%s -\t%dms', name, duration && duration.toFixed(0));
-        };
-    }
-
-    /**
-     * Wrap the given function to measure the amount of time a single method calls takes, does nothing if LogLevel.performance is
-     * not enabled on the this logger.
-     *
-     * @param name the name under which to log the measurements
-     * @param func the function to wrap
-     */
-    measureWrap<T extends (...args: any[]) => any>(name: string, func: T): T {
-        const logger = this;
-
-        function maybeMeasured(this: any) {
-            return logger.performance() ? measured.apply(this, arguments) : func.apply(this, arguments);
-        }
-
-        function measured(this: any, ...args: any[]) {
-            const stopper = logger.measure(`${name}(${args.map(a => inspect(a, measureInspectOptions)).join(', ')})`);
-            try {
-                return func.apply(this, arguments);
-            } catch (e) {
-                logger.performance(e);
-                throw e;
-            } finally {
-                stopper();
-            }
-        }
-
-        return maybeMeasured as T;
-    }
-
-    /**
      * Wrap the given function to trace all calls to the method and logs both the entry and exit from the method, only if LogLevel.trace
      * is enabled for this logger.
      *
      * @param name the name under which to log the traces
      * @param func the function to wrap
-     * @param options optional options that should be passed to util.inspect when inspecting parameters to the method call
      */
-    traceWrap<T extends (...args: any[]) => any>(name: string, func: T, options: InspectOptions = {}): T {
+    traceWrap<T extends (...args: any[]) => any>(name: string, func: T): T {
         const logger = this;
 
         function maybeTraced(this: any) {
@@ -133,13 +77,13 @@ export class Logger {
         }
 
         function traced(this: any, ...args: any[]) {
-            logger.trace(`${name}(${args.map(a => inspect(a, options)).join(', ')})`);
+            logger.trace(`${name}(${args.map(simpleInspect).join(', ')})`);
             try {
                 const result = func.apply(this, arguments);
-                logger.trace('RETURNS', inspect(result, options));
+                logger.trace('RETURNS', simpleInspect(result));
                 return result;
             } catch (e) {
-                logger.trace(e, 'THROWS', String(e));
+                logger.trace(e, 'THROWS', e);
                 throw e;
             }
         }
@@ -176,12 +120,12 @@ function createLogMethod(level: LogLevel): LogMethod {
     function createLogRecord(this: Logger, ...args: any[]): LogRecord {
         const error = args[0] instanceof Error ? args.shift() as Error : undefined;
         const detailsObj = args[0] && typeof args[0] === 'object' ? args.shift() : undefined;
-        const message = args.length ? args.shift() : String(error);
+        const message = args.length ? args.join(' ') : String(error);
         const details = error
             ? { stack: fullStack(error), ...errorInfo(error), ...detailsObj }
             : detailsObj && { ...detailsObj };
 
-        return new FormattedLogRecord(this.name, level, new Date, details, message, args);
+        return { logger: this.name, level, time: new Date, details, message };
     }
 }
 
@@ -196,22 +140,33 @@ export interface LogMethod {
      * Logs the error with additional details plus error information (such as stack) if this level is currently enabled. Returns true iff
      * something was logged.
      */
-    (this: Logger, err: Error, details: object, msg?: any, ...args: any[]): boolean;
+    (this: Logger, err: Error, details: object, ...messageParts: any[]): boolean;
 
     /**
      * Logs the error with additional error information (such as stack) if this level is currently enabled. Returns true iff something was
      * logged.
      */
-    (this: Logger, err: Error, msg?: any, ...args: any[]): boolean;
+    (this: Logger, err: Error, ...messageParts: any[]): boolean;
 
     /**
      * Log a message with additional details if this level is currently enabled. Returns true iff something was logged.
      */
-    (this: Logger, details: object, msg: any, ...args: any[]): boolean;
+    (this: Logger, details: object, msg: any, ...messageParts: any[]): boolean;
 
     /**
      * Log a message if this level is currently enabled. Returns true iff something was logged.
      */
-    (this: Logger, msg: any, ...args: any[]): boolean;
+    (this: Logger, msg: any, ...messageParts: any[]): boolean;
 }
 // tslint:enable:unified-signatures
+
+function simpleInspect(obj: any) {
+    switch (typeof obj) {
+        case 'boolean':
+        case 'number':
+        case 'string':
+            return JSON.stringify(obj);
+        default:
+            return String(obj);
+    }
+}

@@ -1,4 +1,3 @@
-import { format } from 'util';
 import { LogLevel } from './loglevel';
 
 /**
@@ -20,33 +19,4 @@ export interface LogRecord<T = object | undefined> {
 
     /** The message that was passed to the log method or extracted from an Error object. */
     readonly message: string;
-}
-
-export class FormattedLogRecord<T = object | undefined> implements LogRecord<T> {
-    constructor(
-        public readonly logger: string,
-        public readonly level: LogLevel,
-        public readonly time: Date,
-        public readonly details: T,
-        private readonly msg: any,
-        private readonly params: any[],
-    ) { }
-
-    private _message: string | undefined = undefined;
-    get message() {
-        if (this._message === undefined) {
-            this._message = format(this.msg, ...this.params);
-        }
-        return this._message;
-    }
-
-    toJSON() {
-        return {
-            logger: this.logger,
-            level: this.level,
-            time: this.time.toISOString(),
-            details: this.details,
-            message: this.message,
-        };
-    }
 }

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { SinonFakeTimers, useFakeTimers } from 'sinon';
-import { deprecated, measure, trace } from './decorators';
+import { deprecated, trace } from './decorators';
 import { Logger } from './logger';
 import { resetLoggers } from './logger.spec';
 import { captureLogging } from './loghandler';
@@ -11,19 +11,6 @@ context('decorators', () => {
     let logger: Logger;
     before(() => logger = Logger.get('decorator tests'));
     after(resetLoggers);
-
-    describe('@measure', () => {
-        testMethodDecorator('measure', () => measure(logger));
-
-        it('should wrap the method with logger.measureWrap', () => {
-            class TestClass {
-                @measure(logger)
-                method() { return 'whatever'; }
-            }
-
-            expect(TestClass.prototype.method.name).to.equal('maybeMeasured');
-        });
-    });
 
     describe('@trace', () => {
         testMethodDecorator('trace', () => trace(logger));
