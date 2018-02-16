@@ -1,17 +1,4 @@
-import { InspectOptions } from 'util';
 import { Logger } from './logger';
-
-/**
- * MethodDecorator to measure the amount of time a single method calls takes, does nothing if LogLevel.performance is not enabled on the
- * provided logger.
- *
- * @param logger the Logger that should be used for the logging
- */
-export function measure(logger: Logger): MethodDecorator {
-    return createDecorator('measure',
-        (target, propertyKey, method) => logger.measureWrap(`${methodName(target, propertyKey)}`, method),
-    );
-}
 
 /**
  * MethodDecorator that traces all calls to the method and logs both the entry and exit from the method, only if LogLevel.trace
@@ -20,9 +7,9 @@ export function measure(logger: Logger): MethodDecorator {
  * @param logger the Logger that should be used for the logging
  * @param options optional options that should be passed to util.inspect when inspecting parameters to the method call
  */
-export function trace(logger: Logger, options?: InspectOptions): MethodDecorator {
+export function trace(logger: Logger): MethodDecorator {
     return createDecorator('trace',
-        (target, propertyKey, method) => logger.traceWrap(`${methodName(target, propertyKey)}`, method, options),
+        (target, propertyKey, method) => logger.traceWrap(`${methodName(target, propertyKey)}`, method),
     );
 }
 

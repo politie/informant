@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import { BaseError, errorInfo, findCauseByName, fullStack, hasCauseWithName } from './errors';
+import { spy } from 'sinon';
+import { BaseError, errorForEach, errorFromList, errorInfo, findCauseByName, fullStack, hasCauseWithName, MultiError } from './errors';
 
 describe('BaseError', () => {
     it('should support aggregated info', () => {
@@ -34,13 +35,17 @@ describe('BaseError', () => {
             new BaseError(new Error, { info: 'object' }, 'message'),
             new BaseError(new Error, { info: 'object' }, 'message', 'with', 'parameters'),
             new BaseError(new Error, { info: 'object' }, 'message', 123, 'parameters', new Date, {}),
+            new BaseError({ info: 'object' }, new Error, 'message'),
+            new BaseError({ info: 'object' }, new Error, 'message', 'with', 'parameters'),
+            new BaseError({ info: 'object' }, new Error, 'message', 123, 'parameters', new Date, {}),
+            // Support for old ES5 style Error invocation
+            (BaseError as any)('message'),
         ].forEach(e => expect(e).to.be.an.instanceOf(BaseError));
     });
 
     it('should throw when constructed with the wrong arguments', () => {
         expect(() => new BaseError(undefined as any)).to.throw();
         expect(() => new BaseError(new Error, undefined as any)).to.throw();
-        expect(() => new BaseError({ a: 1 } as any, new Error, 'message')).to.throw();
     });
 
     it('should show a full cause chain', () => {
@@ -57,10 +62,88 @@ describe('BaseError', () => {
         ].join(''), 'm'));
     });
 
+    context('(multierrors)', () => {
+        describe('errorFromList', () => {
+            it('should return undefined on an empty array', () => {
+                expect(errorFromList([])).to.be.undefined;
+            });
+
+            it('should return the only error on an array of length 1', () => {
+                const err = new Error();
+                expect(errorFromList([err])).to.equal(err);
+            });
+
+            it('should return a MultiError on multiple errors', () => {
+                const errors = [new Error('a'), new Error('b')];
+                const multi = errorFromList(errors) as MultiError;
+                expect(multi).to.be.an.instanceOf(MultiError);
+                expect(multi.errors()).to.have.members(errors);
+            });
+        });
+
+        describe('errorForEach', () => {
+            it('should call the callback once with a single error', () => {
+                const s = spy();
+                const e = new Error();
+                errorForEach(e, s);
+                expect(s).to.have.been.calledOnce.and.to.have.been.calledWithExactly(e);
+            });
+
+            it('should call the callback with every error from a MultiError', () => {
+                const s = spy();
+                const errors = [new Error(), new Error()];
+                const multi = errorFromList(errors)!;
+                errorForEach(multi, s);
+                expect(s).to.have.been.calledTwice
+                    .and.to.have.been.calledWithExactly(errors[0])
+                    .and.to.have.been.calledWithExactly(errors[1]);
+            });
+        });
+
+        describe('MultiError', () => {
+            context('(with multiple errors)', () => {
+                let errors: Error[];
+                let multi: MultiError;
+                beforeEach(() => multi = new MultiError(errors = [new Error('a'), new Error('b')]));
+
+                it('should contain the first errormessage in the message', () => {
+                    expect(multi.message).to.equal('first of 2 errors: a');
+                });
+
+                it('should expose the errors with the errors method', () => {
+                    expect(multi.errors()).to.have.members(errors);
+                });
+
+                it('should use the first error as cause', () => {
+                    expect(multi.cause()).to.equal(errors[0]);
+                });
+
+                it('should combine the info objects from the errors', () => {
+                    multi = new MultiError([new BaseError({ a: 1 }, 'a'), new BaseError({ b: 2 }, 'b')]);
+                    expect(multi.info()).to.deep.equal({ a: 1, b: 2 });
+                });
+            });
+
+            context('(with one error)', () => {
+                let error: Error;
+                let multi: MultiError;
+                beforeEach(() => multi = new MultiError([error = new Error('the one')]));
+
+                it('show contain the error message from the provided error', () => {
+                    expect(multi.message).to.equal('first of 1 error: the one');
+                });
+
+                it('should use error as cause', () => {
+                    expect(multi.cause()).to.equal(error);
+                });
+            });
+        });
+    });
+
     context('(subclassed)', () => {
         class BipedError extends BaseError {
             constructor(species: string, legs: number, cause?: Error) {
-                super(cause, { species, legs }, `Encountered %s with %d legs`, species, legs);
+                super(cause, { species, legs }, `Encountered ${species} with ${legs} legs`);
             }
         }
         const err = new BipedError('a human', 3);

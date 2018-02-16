@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import * as marky from 'marky';
 import { SinonStub, spy, stub } from 'sinon';
 import { BaseError, fullStack } from './errors';
 import { Logger } from './logger';
@@ -36,14 +35,9 @@ describe('Logger', () => {
                 expect(records).to.have.length(2);
             });
 
-            it('should format messages with sprintf-like parameters', () => {
-                logger[levelName]('a %s with %d parameters, including an object: %j', 'message', 3, { a: 1 });
-                expect(records[0].message).to.equal('a message with 3 parameters, including an object: {"a":1}');
-            });
-
-            it('should always log all parameters even with a missing replacement-string', () => {
-                logger[levelName]('a message with a %s, but also:', 'parameter', 'other stuff', { like: 'this' });
-                expect(records[0].message).to.equal(`a message with a parameter, but also: other stuff { like: 'this' }`);
+            it('should always log all parameters', () => {
+                logger[levelName]('a message with', 'other stuff', { like: 'this' });
+                expect(records[0].message).to.equal(`a message with other stuff [object Object]`);
             });
 
             it('should pass a complete LogRecord to all handlers', () => {
@@ -112,71 +106,6 @@ describe('Logger', () => {
             });
         });
     }
-
-    describe('#measure', () => {
-        let logger: Logger;
-        let stop: () => void;
-        beforeEach('get the measure method', () => {
-            logger = Logger.get('measure');
-            logger.level = LogLevel.performance;
-            stop = logger.measure('the measurement');
-        });
-        afterEach('stop if needed', () => stop());
-
-        it('should not log anything in the first call', () => {
-            expect(records).to.be.empty;
-        });
-
-        it('should return a closure that stops and logs the measurement', () => {
-            expect(stop).to.be.a('function');
-            stop();
-            expect(records).to.have.length(1);
-        });
-
-        context('after stopping', () => {
-            let record: LogRecord<PerformanceEntry>;
-            beforeEach('stop the measurement', () => {
-                stop();
-                record = records[0] as LogRecord<PerformanceEntry>;
-            });
-
-            it('should report a duration and the name of the measurement in the details', () => {
-                expect(record.details.duration).to.be.a('number');
-                expect(record.details.duration).to.be.below(100, 'curiously large number!');
-                expect(record.details.startTime).to.be.a('number');
-                expect(record.details.name).to.equal('the measurement');
-            });
-
-            it('should have a human friendly message', () => {
-                expect(record.message).to.match(/^the measurement -\t[\d.]+ms$/);
-            });
-
-            it('should silently handle calling the returned stopper again', () => {
-                expect(stop).not.to.throw();
-            });
-        });
-
-        it('should be able to handle nested measurements with the same name', () => {
-            const stop2 = logger.measure('the measurement');
-            stop2();
-            stop();
-            expect(records).to.have.length(2);
-            const [entry1, entry2] = records.map(r => r.details as PerformanceEntry);
-            expect(entry1.name).to.equal('the measurement');
-            expect(entry2.name).to.equal('the measurement');
-            expect(entry2.duration).to.not.be.below(entry1.duration);
-            expect(entry2.startTime).to.not.be.above(entry1.startTime);
-        });
-
-        it('should not perform a measurement if LogLevel.performance is not enabled', () => {
-            const s = spy(marky, 'mark');
-            logger.level = LogLevel.info;
-            logger.measure('whatever')();
-            expect(s).not.to.have.been.called;
-            expect(records).to.be.empty;
-            s.restore();
-        });
-    });
 
     describe('#childLogger', () => {
         let base: Logger;
@@ -253,59 +182,6 @@ describe('Logger', () => {
         });
     });
 
-    describe('#measureWrap', () => {
-        let logger: Logger;
-        before(() => {
-            logger = Logger.get('measureWrap test');
-            logger.level = LogLevel.performance;
-        });
-        after(resetLoggers);
-
-        let func: (...args: any[]) => string;
-        let fails: (reason: string) => never;
-        beforeEach('create the wrapped functions', () => {
-            func = logger.measureWrap('funcName', (...args: any[]) => args.join(' '));
-            fails = logger.measureWrap('failsName', (reason: string) => { throw new BaseError({ code: 'abc' }, reason); });
-        });
-
-        it('should follow a fast path when performance level is not enabled', () => {
-            const loggerMeasure = spy(logger, 'measure');
-            logger.level = logNothing;
-            func();
-            expect(loggerMeasure).to.not.have.been.called;
-            logger.level = logEverything;
-            func();
-            expect(loggerMeasure).to.have.been.calledOnce;
-            loggerMeasure.restore();
-        });
-
-        it('should log the time spent inside the method with any parameters involved.', () => {
-            func('string', 1337, { obj: { a: 1, b: { c: 3 } } });
-            expect(records).to.have.length(1);
-            const { details: { name, duration }, message } = records[0] as LogRecord<PerformanceEntry>;
-            expect(name).to.equal(`funcName('string', 1337, { obj: [Object] })`);
-            expect(duration).to.be.a('number').and.to.be.below(2);
-            expect(message).to.match(/funcName\('string', 1337, { obj: \[Object] }\)\s+-\s+\d+ms/);
-        });
-
-        it('should log on LogLevel.performance', () => {
-            func();
-            expect(records[0].level).to.equal(LogLevel.performance);
-        });
-
-        it('should log an error if any occurs, but still log the time spent inside the method', () => {
-            expect(() => fails('my reason')).to.throw('my reason');
-            expect(records).to.have.length(2);
-            const { details: { code, stack }, message: errorMessage } = records[0] as LogRecord<{ code: string, stack: string }>;
-            expect(code).to.equal('abc');
-            expect(stack).to.be.a('string');
-            expect(errorMessage).to.contain('my reason');
-            const { details: { name }, message } = records[1] as LogRecord<PerformanceEntry>;
-            expect(name).to.equal(`failsName('my reason')`);
-            expect(message).to.match(/failsName\('my reason'\)\s+-\s+\d+ms/);
-        });
-    });
-
     describe('#traceWrap', () => {
         let logger: Logger;
         before(() => {
@@ -319,10 +195,7 @@ describe('Logger', () => {
         let fails: (reason: string) => never;
         beforeEach('create the wrapped functions', () => {
             func = logger.traceWrap('funcName', (...args: any[]) => args.join(' '));
-            funcWithOptions = logger.traceWrap('funcWithOptionsName',
-                (...args: any[]) => func(...args) + ' from func',
-                { depth: 0 },
-            );
+            funcWithOptions = logger.traceWrap('funcWithOptionsName', (...args: any[]) => func(...args) + ' from func');
             fails = logger.traceWrap('failsName', (reason: string) => { throw new BaseError({ code: 'abc' }, reason); });
         });
 
@@ -347,17 +220,17 @@ describe('Logger', () => {
         });
 
         it('should log all parameters and the result of the call', () => {
-            func('string', 1337, { object: { with: { arbitrary: 'nesting' } } });
+            func('string', 1337, { object: 1 }, false);
             expect(records.map(r => r.message)).to.deep.equal([
-                `funcName('string', 1337, { object: { with: { arbitrary: 'nesting' } } })`,
-                `RETURNS 'string 1337 [object Object]'`,
+                `funcName("string", 1337, [object Object], false)`,
+                `RETURNS "string 1337 [object Object] false"`,
             ]);
         });
 
         it('should log an exception if it occurs', () => {
             expect(() => fails('error message')).to.throw('error message');
             expect(records.map(r => r.message)).to.deep.equal([
-                `failsName('error message')`,
+                `failsName("error message")`,
                 `THROWS BaseError: error message`,
             ]);
             const { stack, code } = records[1].details as any;
@@ -365,18 +238,13 @@ describe('Logger', () => {
             expect(stack).to.be.a('string');
         });
 
-        it('should use the inspect options if provided', () => {
-            funcWithOptions('string', 1337, { object: { with: { arbitrary: 'nesting' } } });
-            expect(records[0].message).to.equal(`funcWithOptionsName('string', 1337, { object: [Object] })`);
-        });
-
         it('should support nested calls', () => {
-            funcWithOptions('string', 1337, { object: { with: { arbitrary: 'nesting' } } });
+            funcWithOptions('string', 1337, { object: 1 });
             expect(records.map(r => r.message)).to.deep.equal([
-                `funcWithOptionsName('string', 1337, { object: [Object] })`,
-                `funcName('string', 1337, { object: { with: { arbitrary: 'nesting' } } })`,
-                `RETURNS 'string 1337 [object Object]'`,
-                `RETURNS 'string 1337 [object Object] from func'`,
+                `funcWithOptionsName("string", 1337, [object Object])`,
+                `funcName("string", 1337, [object Object])`,
+                `RETURNS "string 1337 [object Object]"`,
+                `RETURNS "string 1337 [object Object] from func"`,
             ]);
         });
     });
