@@ -1,19 +1,13 @@
-function createExtendableError(): { new(msg: string): Error } {
-    function ExtendableError(this: Error, message: string) {
-        if (this instanceof Error) {
-            Error.call(this, message);
-            this.message = message;
-        }
-    }
-    ExtendableError.prototype = Object.create(Error.prototype);
-    ExtendableError.prototype.constructor = ExtendableError;
-    return ExtendableError as any;
+ExtendableError.prototype = Object.create(Error.prototype);
+function ExtendableError(this: Error, message: string) {
+    Error.call(this, message);
+    this.message = message;
 }
 
 /**
  * BaseErrors can be used to create nice subclasses of Error.
  */
-export class BaseError extends createExtendableError() {
+export class BaseError extends (ExtendableError as typeof Error) {
     /**
      * Create a new BaseError with a cause and a structured info Object.
      */
