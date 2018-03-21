@@ -56,7 +56,7 @@
         "rollup": "^0.56.2",
         "rollup-plugin-sourcemaps": "^0.4.2",
         "rollup-plugin-visualizer": "^0.3.1",
-        "sinon": "^4.0.2",
+        "sinon": "^5.0.0",
         "sinon-chai": "^2.14.0",
         "ts-node": "^5.0.0",
         "tslint": "^5.8.0",
