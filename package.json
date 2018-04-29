@@ -58,7 +58,7 @@
         "rollup-plugin-visualizer": "^0.3.1",
         "sinon": "^4.0.2",
         "sinon-chai": "^2.14.0",
-        "ts-node": "^5.0.0",
+        "ts-node": "^6.0.2",
         "tslint": "^5.8.0",
         "typescript": "^2.7.1"
     }
