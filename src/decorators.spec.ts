@@ -9,7 +9,7 @@ import { LogRecord } from './logrecord';
 
 context('decorators', () => {
     let logger: Logger;
-    before(() => logger = Logger.get('decorator tests'));
+    before(() => { logger = Logger.get('decorator tests'); });
     after(resetLoggers);
 
     describe('@trace', () => {
@@ -30,7 +30,7 @@ context('decorators', () => {
 
         let records: LogRecord[];
         let restore: () => void;
-        beforeEach('record all log messages', () => ({ records, restore } = captureLogging()));
+        beforeEach('record all log messages', () => { ({ records, restore } = captureLogging()); });
         afterEach('stop recording all log messages', () => restore());
 
         let clazz: { method(a: string): string; };
@@ -63,10 +63,10 @@ context('decorators', () => {
 
             context('after calling the method once', () => {
                 let clock: SinonFakeTimers;
-                beforeEach(() => clock = useFakeTimers());
+                beforeEach(() => { clock = useFakeTimers(); });
                 afterEach(() => clock.restore());
 
-                beforeEach(() => inst.method('whatever'));
+                beforeEach(() => { inst.method('whatever'); });
 
                 it('should have created a log message', () => {
                     expect(records).to.have.length(1);
@@ -82,7 +82,7 @@ context('decorators', () => {
                 });
 
                 context('after waiting a second', () => {
-                    beforeEach(() => clock.tick(1000));
+                    beforeEach(() => { clock.tick(1000); });
 
                     it('should warn again on the next call', () => {
                         expect(records).to.have.length(1);

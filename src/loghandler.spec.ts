@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { sandbox, spy, stub } from 'sinon';
+import { createSandbox, spy, stub } from 'sinon';
 import {
     async, captureLogging, consoleHandler, forLogger, fromLevel, LogHandler, logHandlers, registerLogHandler, ringBuffer,
     unregisterLogHandler,
@@ -110,7 +110,7 @@ describe('consoleHandler', () => {
     for (const level of levels) {
         it(`should call the right console method for level LogLevel.${LogLevel[level]}`, () => {
             const record = logRecord({ level });
-            const sb = sandbox.create();
+            const sb = createSandbox();
             const consoleError = sb.stub(console, 'error');
             const consoleWarn = sb.stub(console, 'warn');
             const consoleInfo = sb.stub(console, 'info');
