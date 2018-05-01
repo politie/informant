@@ -104,7 +104,7 @@ describe('BaseError', () => {
             context('(with multiple errors)', () => {
                 let errors: Error[];
                 let multi: MultiError;
-                beforeEach(() => multi = new MultiError(errors = [new Error('a'), new Error('b')]));
+                beforeEach(() => { multi = new MultiError(errors = [new Error('a'), new Error('b')]); });
 
                 it('should contain the first errormessage in the message', () => {
                     expect(multi.message).to.equal('first of 2 errors: a');
@@ -127,7 +127,7 @@ describe('BaseError', () => {
             context('(with one error)', () => {
                 let error: Error;
                 let multi: MultiError;
-                beforeEach(() => multi = new MultiError([error = new Error('the one')]));
+                beforeEach(() => { multi = new MultiError([error = new Error('the one')]); });
 
                 it('show contain the error message from the provided error', () => {
                     expect(multi.message).to.equal('first of 1 error: the one');

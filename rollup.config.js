@@ -1,5 +1,4 @@
 import sourcemaps from 'rollup-plugin-sourcemaps';
-import visualizer from 'rollup-plugin-visualizer';
 import pkg from './package.json';
 
 // CommonJS (for Node) and ES module (for bundlers) build.
@@ -13,6 +12,6 @@ export default {
 
     plugins: [
         sourcemaps(),
-        visualizer({ filename: `dist/stats.html` }),
+        ...(process.version.startsWith('v6') ? [] : [require('rollup-plugin-visualizer')({ filename: `dist/stats.html` })]),
     ],
 };

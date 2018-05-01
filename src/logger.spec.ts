@@ -9,7 +9,7 @@ import { LogRecord } from './logrecord';
 describe('Logger', () => {
     let records: LogRecord[];
     let restore: () => void;
-    beforeEach(() => ({ records, restore } = captureLogging()));
+    beforeEach(() => { ({ records, restore } = captureLogging()); });
     afterEach(() => restore());
 
     afterEach(resetLoggers);
@@ -109,7 +109,7 @@ describe('Logger', () => {
 
     describe('#childLogger', () => {
         let base: Logger;
-        beforeEach('create the base logger', () => base = Logger.get('base'));
+        beforeEach('create the base logger', () => { base = Logger.get('base'); });
 
         it('should get or create the correct child logger', () => {
             expect(base.childLoggers).to.deep.equal({});
@@ -252,7 +252,7 @@ describe('Logger', () => {
 
 describe('Logger', () => {
     let consoleInfo: SinonStub;
-    beforeEach(() => consoleInfo = stub(console, 'info'));
+    beforeEach(() => { consoleInfo = stub(console, 'info'); });
     afterEach(() => consoleInfo.restore());
 
     describe('without a registered logHandler', () => {
