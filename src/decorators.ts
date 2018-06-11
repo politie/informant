@@ -43,7 +43,7 @@ function createDecorator(name: string, f: (target: any, propertyKey: string | sy
 
 function methodName(target: any, propertyKey: string | symbol) {
     if (target.constructor === Function) {
-        return `${target.name}.${propertyKey}`;
+        return `${target.name}.${String(propertyKey)}`;
     }
-    return `${target.constructor.name}#${propertyKey}`;
+    return `${target.constructor.name}#${String(propertyKey)}`;
 }
