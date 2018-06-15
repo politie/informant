@@ -12,8 +12,6 @@ declare global {
     namespace NodeJS {
         interface Global {
             _politie_informant_loaded_: boolean;
-            it?(): void;
-            describe?(): void;
         }
     }
 }
