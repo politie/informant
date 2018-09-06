@@ -67,10 +67,12 @@ export function async(handler: LogHandler): LogHandler {
  */
 export function consoleHandler(record: LogRecord) {
     const { level } = record;
+    // tslint:disable:no-console
     if (level >= LogLevel.error) { return log(console.error, record); }
     if (level >= LogLevel.warning) { return log(console.warn, record); }
     if (level >= LogLevel.info) { return log(console.info, record); }
     log(console.log, record);
+    // tslint:enable:no-console
 }
 
 function log(method: typeof console.log, record: LogRecord) {
