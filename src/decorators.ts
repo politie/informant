@@ -37,7 +37,7 @@ type Func = (...args: any[]) => any;
 function createDecorator(name: string, f: (target: any, propertyKey: string | symbol, method: Func) => Func): MethodDecorator {
     return <T>(target: any, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<T>) => {
         if (!descriptor || typeof descriptor.value !== 'function') { throw new Error(`@${name}() can only be used on method.`); }
-        descriptor.value = f(target, propertyKey, descriptor.value) as any;
+        descriptor.value = f(target, propertyKey, descriptor.value as any) as any;
     };
 }
 
