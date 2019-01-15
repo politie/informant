@@ -18,7 +18,7 @@ export class Logger {
 
     private constructor(
         /** The name of the logger, this name can be used to get the correct Logger instance and will be present in all LogRecords. */
-        public readonly name: string,
+        readonly name: string,
         /** The current level of this logger. Only messages of this level and higher are logged. */
         public level: LogLevel,
     ) { }
@@ -73,13 +73,13 @@ export class Logger {
         const logger = this;
 
         function maybeTraced(this: any) {
-            return logger.trace() ? traced.apply(this, arguments) : func.apply(this, arguments);
+            return logger.trace() ? traced.apply(this, arguments as any) : func.apply(this, arguments as any);
         }
 
         function traced(this: any, ...args: any[]) {
             logger.trace(`${name}(${args.map(simpleInspect).join(', ')})`);
             try {
-                const result = func.apply(this, arguments);
+                const result = func.apply(this, args);
                 logger.trace('RETURNS', simpleInspect(result));
                 return result;
             } catch (e) {
@@ -104,7 +104,7 @@ function createLogMethod(level: LogLevel): LogMethod {
             return false;
         }
         if (arguments.length) {
-            const record = createLogRecord.apply(this, arguments);
+            const record = createLogRecord.apply(this, arguments as any);
             // If no handlers are registered, let consoleHandler handle log.
             if (logHandlers.length === 0) {
                 consoleHandler(record);

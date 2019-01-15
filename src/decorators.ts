@@ -28,7 +28,7 @@ export function deprecated(logger: Logger, instruction = ''): MethodDecorator {
                     logger.warning(`${methodName(target, propertyKey)} is deprecated.`, instruction);
                     silenceUntil = Date.now() + 1000;
                 }
-                return method.apply(this, arguments);
+                return method.apply(this, arguments as any);
             };
         });
 }
