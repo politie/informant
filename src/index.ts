@@ -2,7 +2,8 @@ export { deprecated, trace } from './decorators';
 export { BaseError, errorForEach, errorFromList, errorInfo, findCauseByName, fullStack, hasCauseWithName, InfoObject } from './errors';
 export { Logger, LogMethod } from './logger';
 export {
-    async, captureLogging, consoleHandler, forLogger, fromLevel, LogHandler, registerLogHandler, unregisterLogHandler,
+    async, captureLogging, consoleHandler, forLogger, fromLevel, LogHandler,
+    registerLogHandler, RingBuffer, ringBuffer, unregisterLogHandler,
 } from './loghandler';
 export { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel';
 export { LogRecord } from './logrecord';
