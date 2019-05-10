@@ -1,3 +1,4 @@
+import { types } from 'util';
 import { LogLevel } from './loglevel';
 import { LogRecord } from './logrecord';
 
@@ -48,11 +49,17 @@ export function fromLevel(level: LogLevel, handler: LogHandler): LogHandler {
 }
 
 /**
- * Ensures the provided handler only receives records for the logger with the given name or any of its children.
+ * Ensures the provided handler only receives records for:
+ *  * the logger with the given name or any of its children, if provided with a string
+ * OR
+ *  * the logger(s) matching the given regular expression
  */
-export function forLogger(name: string, handler: LogHandler): LogHandler {
-    const nameWithDot = name + '.';
-    return record => (record.logger === name || record.logger.startsWith(nameWithDot)) && handler(record);
+export function forLogger(name: string | RegExp, handler: LogHandler): LogHandler {
+    if (types.isRegExp(name)) {
+        return record => name.test(record.logger) && handler(record);
+    } else {
+        return record => (record.logger === name || record.logger.startsWith(name + '.')) && handler(record);
+    }
 }
 
 /**
