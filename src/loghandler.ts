@@ -1,4 +1,3 @@
-import { types } from 'util';
 import { LogLevel } from './loglevel';
 import { LogRecord } from './logrecord';
 
@@ -55,10 +54,10 @@ export function fromLevel(level: LogLevel, handler: LogHandler): LogHandler {
  *  * the logger(s) matching the given regular expression
  */
 export function forLogger(name: string | RegExp, handler: LogHandler): LogHandler {
-    if (types.isRegExp(name)) {
-        return record => name.test(record.logger) && handler(record);
-    } else {
+    if (typeof name === 'string') {
         return record => (record.logger === name || record.logger.startsWith(name + '.')) && handler(record);
+    } else {
+        return record => name.test(record.logger) && handler(record);
     }
 }
 
