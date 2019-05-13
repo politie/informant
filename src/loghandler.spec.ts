@@ -72,7 +72,7 @@ describe('fromLevel', () => {
 });
 
 describe('forLogger', () => {
-    it('should pass records from the given logger or any of its childs', () => {
+    it('should pass records from the given logger or any of its children, by string', () => {
         const h = stub();
         const handler = forLogger('base.child', h);
         const baseRecord = logRecord({ logger: 'base' });
@@ -87,6 +87,22 @@ describe('forLogger', () => {
             .and.to.have.been.calledWithExactly(grandchildRecord);
     });
 
+    it('should pass records from the given logger or any of its children', () => {
+        const h = stub();
+        const handler = forLogger(/.*-test/, h);
+        const simpleRecord = logRecord({ logger: 'test' });
+        const aRecord = logRecord({ logger: 'a-test' });
+        const bChildRecord = logRecord({ logger: 'base-test.child' });
+        const suffixRecord = logRecord({ logger: 'another-testlogger' });
+        const infixRecord = logRecord({ logger: 'in-fixtest' });
+
+        [simpleRecord, aRecord, bChildRecord, suffixRecord, infixRecord].forEach(handler);
+
+        expect(h).to.have.been.calledThrice
+            .and.to.have.been.calledWithExactly(aRecord)
+            .and.to.have.been.calledWithExactly(bChildRecord)
+            .and.to.have.been.calledWithExactly(suffixRecord);
+    });
 });
 
 describe('async', () => {

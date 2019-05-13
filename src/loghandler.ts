@@ -48,11 +48,17 @@ export function fromLevel(level: LogLevel, handler: LogHandler): LogHandler {
 }
 
 /**
- * Ensures the provided handler only receives records for the logger with the given name or any of its children.
+ * Ensures the provided handler only receives records for:
+ *  * the logger with the given name or any of its children, if provided with a string
+ * OR
+ *  * the logger(s) matching the given regular expression
  */
-export function forLogger(name: string, handler: LogHandler): LogHandler {
-    const nameWithDot = name + '.';
-    return record => (record.logger === name || record.logger.startsWith(nameWithDot)) && handler(record);
+export function forLogger(name: string | RegExp, handler: LogHandler): LogHandler {
+    if (typeof name === 'string') {
+        return record => (record.logger === name || record.logger.startsWith(name + '.')) && handler(record);
+    } else {
+        return record => name.test(record.logger) && handler(record);
+    }
 }
 
 /**
