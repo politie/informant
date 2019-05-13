@@ -1,6 +1,6 @@
 {
     "name": "@politie/informant",
-    "version": "1.0.2",
+    "version": "1.0.1",
     "description": "Informant is a simple and fast logging library for Node.js and browser JavaScript applications.",
     "main": "dist/informant.cjs.js",
     "module": "dist/informant.esm.js",
