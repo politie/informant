@@ -1,6 +1,6 @@
 {
     "name": "@politie/informant",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Informant is a simple and fast logging library for Node.js and browser JavaScript applications.",
     "main": "dist/informant.cjs.js",
     "module": "dist/informant.esm.js",
@@ -16,8 +16,6 @@
         "bundle": "tsc --module es6 && rollup -c && node ./test-bundle",
         "tsc": "tsc",
         "test": "npm run lint && npm run tsc && nyc --check-coverage --lines 100 --functions 100 --branches -1 --statements 100 --reporter text-summary --reporter lcov --include \"dist/**/*.js\" --exclude \"**/*.spec.js\" mocha --forbid-only \"dist/**/*.spec.js\"",
-        "ci:travis": "npm run build && cat coverage/lcov.info | node_modules/.bin/coveralls",
-        "ci:circle": "npm run build",
         "posttest": "rimraf .nyc_output",
         "watch": "nodemon --watch src --ext ts --exec npm run watch:run",
         "watch:run": "nyc --reporter html --reporter text-summary --extension .ts --include \"src/**/*.ts\" --exclude \"src/**/*.spec.ts\" mocha --reporter landing --compilers ts:ts-node/register \"src/**/*.spec.ts\" && rimraf .nyc_output",
@@ -39,27 +37,26 @@
     },
     "homepage": "https://github.com/politie/informant#readme",
     "dependencies": {
-        "tslib": "^1.9.3"
+        "tslib": "^2.2.0"
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",
-        "@types/mocha": "^5.2.6",
-        "@types/node": "^11.13.4",
-        "@types/sinon": "^7.0.11",
+        "@types/mocha": "^8.2.2",
+        "@types/node": "^15.6.2",
+        "@types/sinon": "^10.0.2",
         "@types/sinon-chai": "^3.2.2",
         "chai": "^4.2.0",
-        "coveralls": "^3.0.3",
-        "mocha": "^6.1.3",
-        "nodemon": "^1.18.11",
-        "nyc": "^13.3.0",
-        "rimraf": "^2.6.3",
-        "rollup": "^1.10.0",
-        "rollup-plugin-sourcemaps": "^0.4.2",
-        "rollup-plugin-visualizer": "^1.1.1",
-        "sinon": "^7.3.1",
+        "mocha": "^8.4.0",
+        "nodemon": "^2.0.7",
+        "nyc": "^15.1.0",
+        "rimraf": "^3.0.2",
+        "rollup": "^2.50.5",
+        "rollup-plugin-sourcemaps": "^0.6.3",
+        "rollup-plugin-visualizer": "^5.5.0",
+        "sinon": "^11.1.1",
         "sinon-chai": "^3.3.0",
-        "ts-node": "^8.1.0",
-        "tslint": "^5.15.0",
+        "ts-node": "^10.0.0",
+        "tslint": "^6.1.3",
         "typescript": "^3.4.3"
     }
 }
