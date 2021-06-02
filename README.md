@@ -1,10 +1,11 @@
 # Informant
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/politie/informant.svg)](https://greenkeeper.io/)
-[![Coverage Status](https://coveralls.io/repos/github/politie/informant/badge.svg?branch=master)](https://coveralls.io/github/politie/informant?branch=master)
+[![CI](https://github.com/politie/informant/actions/workflows/build.yml/badge.svg)](https://github.com/politie/informant/actions/workflows/build.yml)
+[![Known Vulnerabilities](https://snyk.io/test/github/politie/informant/badge.svg)](https://snyk.io/test/github/politie/informant)
+[![npm version](https://img.shields.io/npm/v/@politie/informant)](https://www.npmjs.com/package/@politie/informant)
+[![license](https://img.shields.io/npm/l/@politie/informant?color=blue)](https://github.com/politie/informant/blob/main/LICENSE)
 
 Informant is a simple and fast logging library for Node.js and browser JavaScript applications, built with TypeScript. It is hierarchical, supports multiple handlers and includes special support for Errors created with the the `verror` package (see also `BaseError` in this package for easy subclassing in TypeScript).
-
 
 ## Introduction
 
@@ -22,7 +23,6 @@ logger.warning(`Don't know what to do.`);
 ```
 
 You can get a `Logger` with `Logger.get(name: string)`. This will lookup the logger or create it if needed. Loggers are hierarchical. In the example above we got the logger for `myComponent`, which is a child of the `myLibrary` logger, which in turn is a child of the root logger. The root logger can be accessed with: `Logger.get('')`.
-
 
 ### Enabling logging with a LogHandler and the right LogLevel
 
@@ -70,8 +70,7 @@ function tryRequest(request: Request) {
 
 The `logger.info` will log the message `'Attempt to perform request failed'`, but also an object with additional details. In this case it contains the key `retry` which is a number, the `requestId` from the Error and the `stack` from the Error.
 
-
-# The LogLevels
+## The LogLevels
 
 The following log methods (and LogLevels) are supported:
 
@@ -103,8 +102,7 @@ In general: Use "debug" sparingly. Information that will be useful to debug erro
 
 Libraries should only ever log at trace-level. Fine control over log output should be up to the app using a library. Having a library that spews log output at higher levels gets in the way of a clear story in the app logs.
 
-
-# The LogMethod API
+## The LogMethod API
 
 All possible uses of the logging methods:
 
@@ -133,8 +131,7 @@ logger.info(err, { additional: 'information' }, 'and another message');
 
 The same goes for all LogLevels, see the section above on LogLevels.
 
-
-# LogRecord
+## LogRecord
 
 When logging to an enabled LogLevel, a LogRecord is constructed. This LogRecord is passed to all registered LogHandlers.
 
@@ -160,8 +157,7 @@ The LogRecord fields:
 
     Optional object with structured information about the event that was logged.
 
-
-# LogHandlers
+## LogHandlers
 
 A LogHandler is a function that accepts LogRecords (the type is simply: `(record: LogRecord) => void`). Note that LogHandlers should serialize the data synchronously because objects that were passed in by reference can be changed later on by the calling code. This can result in confusing or incorrect logged messages.
 
@@ -214,8 +210,7 @@ There are a number of convenience methods that can construct LogHandlers from ot
     buffer.get();                   // Returns the last 50 records
     ```
 
-
-# Decorators
+## Decorators
 
 Informant provides two method-decorators that can be used to quickly add performance measurements and tracing to existing methods.
 
@@ -259,8 +254,7 @@ Internally these decorators use `util.inspect` to inspect the parameters and ret
 
     When you add `@deprecated(logger)` to a method, it will log a deprecation warning to `logger` the first time the method is called.
 
-
-# Using (V)Errors
+## Using (V)Errors
 
 This library supports Errors created with the `verror` package. It is highly recommended to use these VErrors where possible as these have a number of advantages over normal JavaScript Errors:
 
@@ -288,4 +282,4 @@ class MyHttpError extends VError {
 VError automatically cleans the stack (which is otherwise pretty awkward with custom JavaScript errors), so the stack will look as if the custom errors
 are ordinary built-in errors.
 
-For more information, see: https://github.com/joyent/node-verror
+For more information, see: <https://github.com/joyent/node-verror>
