@@ -26,7 +26,6 @@
         "url": "git+https://github.com/politie/informant.git"
     },
     "keywords": [
-        "politie",
         "logging",
         "typescript"
     ],
