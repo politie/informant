@@ -11,7 +11,7 @@ env:
 
 jobs:
   bump-version:
-    name: Bump package.json Versions
+    name: Bump package.json Version
     runs-on: ubuntu-latest
     outputs:
       tag-name: ${{ steps.bump.outputs.newTag }}
@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Bump lib version
+      - name: Bump version
         id: bump
         uses: phips28/gh-action-bump-version@v9.0.1
         with:
