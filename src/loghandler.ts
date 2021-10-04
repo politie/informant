@@ -117,7 +117,7 @@ export function ringBuffer<V = LogRecord>(maxSize = 100): RingBuffer<V> {
     return Object.defineProperties(handle, {
         size: { get() { return size; } },
         get: { value: get },
-    });
+    }) as RingBuffer<V>;
 }
 
 export interface RingBuffer<V> extends LogHandler {
