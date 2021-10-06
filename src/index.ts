@@ -8,13 +8,10 @@ export {
 export { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel';
 export { LogRecord } from './logrecord';
 
-// tslint:disable-next-line:no-namespace
+// tslint:disable-next-line
 declare global {
-    namespace NodeJS {
-        interface Global {
-            _politie_informant_loaded_: boolean;
-        }
-    }
+    // tslint:disable-next-line:variable-name
+    var _politie_informant_loaded_: boolean;
 }
 
 // do not warn in mocha hot-reloading environment
