@@ -1,6 +1,7 @@
 name: CD
 
 on:
+  workflow_dispatch: {}
   push:
     branches: [main]
 
@@ -16,14 +17,14 @@ jobs:
       tag-name: ${{ steps.bump.outputs.newTag }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           # This is a public_repo Github personal access token.
           token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
 
       - name: Bump version
         id: bump
-        uses: phips28/gh-action-bump-version@v9.0.1
+        uses: phips28/gh-action-bump-version@v9.1.0
         with:
           tag-prefix: 'v'
           commit-message: '[CI/CD]: bump to {{version}}'
@@ -35,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ needs.bump-version.outputs.tag-name }}
 
@@ -51,12 +52,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ needs.bump-version.outputs.tag-name }}
 
       - name: Use node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
 
