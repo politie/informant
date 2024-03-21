@@ -27,7 +27,7 @@ jobs:
           key: ${{ matrix.node-version }}-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
 
       - name: Install
-        if: ${{ steps.cache-modules.output.cache-hit != 'true' }}
+        if: ${{ steps.cache-modules.outputs.cache-hit != 'true' }}
         run: npm install
 
       - name: Lint, test & build
