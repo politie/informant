@@ -17,7 +17,8 @@
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "pretty": true
+        "pretty": true,
+        "esModuleInterop": true
     },
     "include": [
         "src/**/*.ts",
