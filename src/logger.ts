@@ -72,8 +72,8 @@ export class Logger {
     traceWrap<T extends (...args: any[]) => any>(name: string, func: T): T {
         const logger = this;
 
-        function maybeTraced(this: any) {
-            return logger.trace() ? traced.apply(this, arguments as any) : func.apply(this, arguments as any);
+        function maybeTraced(this: any, ...args: any[]) {
+            return logger.trace() ? traced.apply(this, args) : func.apply(this, args);
         }
 
         function traced(this: any, ...args: any[]) {

@@ -65,7 +65,7 @@ export function forLogger(name: string | RegExp, handler: LogHandler): LogHandle
  * Wraps the given handler s.t. the handler is called asynchronously in a future tick.
  */
 export function async(handler: LogHandler): LogHandler {
-    return record => setTimeout(handler, 0, record);
+    return record => setImmediate(() => handler(record));
 }
 
 /**
