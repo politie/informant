@@ -15,8 +15,8 @@ declare global {
 }
 
 // do not warn in mocha hot-reloading environment
-if ((typeof global.it !== 'function' || typeof global.describe !== 'function') && global._politie_informant_loaded_) {
+if ((typeof globalThis.it !== 'function' || typeof globalThis.describe !== 'function') && globalThis._politie_informant_loaded_) {
     // tslint:disable-next-line:no-console
     console.error('@politie/informant already loaded, check for duplicate installs of library!');
 }
-global._politie_informant_loaded_ = true;
+globalThis._politie_informant_loaded_ = true;
