@@ -30,11 +30,14 @@ export function unregisterLogHandler(logHandler: LogHandler) {
  * Temporarily removes all LogHandlers and records all messages into an array of LogRecords. Call restore()
  * after use to restore the previous loghandlers.
  */
-export function captureLogging() {
-    const records: LogRecord[] = [];
-    const handler: LogHandler = r => records.push(r);
+export function captureLogging<T = object | undefined>() {
+    const records: LogRecord<T>[] = [];
+    const handler: LogHandler = r => records.push(r as LogRecord<T>);
     const oldHandlers = logHandlers.slice();
-    const restore = () => { unregisterLogHandler(handler); oldHandlers.forEach(registerLogHandler); };
+    const restore = () => {
+        unregisterLogHandler(handler);
+        oldHandlers.forEach(registerLogHandler);
+    };
     logHandlers[0] = handler;
     logHandlers.length = 1;
     return { records, restore };
