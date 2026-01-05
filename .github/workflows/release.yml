@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 24.x
 
 jobs:
   bump-version:
@@ -78,6 +78,6 @@ jobs:
           # for the "@politie/informant" package only.
           npmToken: ${{ secrets.WORKFLOW_NPM_TOKEN }}
         run: echo "//registry.npmjs.org/:_authToken=$npmToken" >> .npmrc
-        
+
       - name: Release
         run: npm publish

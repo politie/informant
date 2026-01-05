@@ -1,5 +1,5 @@
-import { LogLevel } from './loglevel';
-import { LogRecord } from './logrecord';
+import { LogLevel } from './loglevel.js';
+import { LogRecord } from './logrecord.js';
 
 /**
  * A registered LogHandler simply receives all LogRecords, it should not change the record and not throw Errors.

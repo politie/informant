@@ -3,9 +3,9 @@ import { createSandbox, spy, stub } from 'sinon';
 import {
     async, captureLogging, consoleHandler, forLogger, fromLevel, LogHandler, logHandlers, registerLogHandler, ringBuffer,
     unregisterLogHandler,
-} from './loghandler';
-import { levels, LogLevel } from './loglevel';
-import { LogRecord } from './logrecord';
+} from './loghandler.js';
+import { levels, LogLevel } from './loglevel.js';
+import { LogRecord } from './logrecord.js';
 
 describe('(un)registerLogHandler', () => {
     it('should add/remove the handler to/from the list of handlers', () => {

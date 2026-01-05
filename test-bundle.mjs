@@ -1,6 +1,6 @@
 console.log('Testing bundle...');
 
-const informant = require('./dist/informant.cjs');
+const informant = await import('./dist/informant.esm.js');
 informant.registerLogHandler(informant.consoleHandler);
 
 const logger = informant.Logger.get('test-bundle');

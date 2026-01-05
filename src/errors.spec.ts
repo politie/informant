@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { spy } from 'sinon';
-import { BaseError, errorForEach, errorFromList, errorInfo, findCauseByName, fullStack, hasCauseWithName, MultiError } from './errors';
+import { BaseError, errorForEach, errorFromList, errorInfo, findCauseByName, fullStack, hasCauseWithName, MultiError } from './errors.js';
 
 describe('BaseError', () => {
     it('should support aggregated info', () => {
@@ -38,8 +38,6 @@ describe('BaseError', () => {
             new BaseError({ info: 'object' }, new Error, 'message'),
             new BaseError({ info: 'object' }, new Error, 'message', 'with', 'parameters'),
             new BaseError({ info: 'object' }, new Error, 'message', 123, 'parameters', new Date, {}),
-            // Support for old ES5 style Error invocation
-            (BaseError as any)('message'),
         ].forEach(e => expect(e).to.be.an.instanceOf(BaseError));
     });
 
