@@ -1,4 +1,4 @@
-import { Logger } from './logger';
+import { Logger } from './logger.js';
 
 /**
  * MethodDecorator that traces all calls to the method and logs both the entry and exit from the method, only if LogLevel.trace

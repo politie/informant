@@ -1,4 +1,4 @@
-import { LogLevel } from './loglevel';
+import { LogLevel } from './loglevel.js';
 
 /**
  * The LogRecord is constructed on every log statement if the corresponding LogLevel is enabled. The same LogRecord

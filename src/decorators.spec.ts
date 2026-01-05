@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { SinonFakeTimers, useFakeTimers } from 'sinon';
-import { deprecated, trace } from './decorators';
-import { Logger } from './logger';
-import { resetLoggers } from './logger.spec';
-import { captureLogging } from './loghandler';
-import { LogLevel } from './loglevel';
-import { LogRecord } from './logrecord';
+import { deprecated, trace } from './decorators.js';
+import { Logger } from './logger.js';
+import { captureLogging } from './loghandler.js';
+import { LogLevel } from './loglevel.js';
+import { LogRecord } from './logrecord.js';
+import { resetLoggers } from './testing-utils.spec.js';
 
 context('decorators', () => {
     let logger: Logger;

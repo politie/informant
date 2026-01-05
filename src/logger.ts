@@ -1,7 +1,7 @@
-import { errorInfo, fullStack } from './errors';
-import { consoleHandler, logHandlers } from './loghandler';
-import { levels, LogLevel, LogLevelName } from './loglevel';
-import { LogRecord } from './logrecord';
+import { errorInfo, fullStack } from './errors.js';
+import { consoleHandler, logHandlers } from './loghandler.js';
+import { levels, LogLevel, LogLevelName } from './loglevel.js';
+import { LogRecord } from './logrecord.js';
 
 /**
  * Logger should be used to log messages and data. An instance of Logger can be scoped to a specific domain or component.

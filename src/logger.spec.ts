@@ -1,10 +1,11 @@
 import { expect } from 'chai';
 import { SinonStub, spy, stub } from 'sinon';
-import { BaseError, fullStack } from './errors';
-import { Logger } from './logger';
-import { captureLogging, logHandlers, registerLogHandler, unregisterLogHandler } from './loghandler';
-import { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel';
-import { LogRecord } from './logrecord';
+import { BaseError, fullStack } from './errors.js';
+import { Logger } from './logger.js';
+import { captureLogging, logHandlers, registerLogHandler, unregisterLogHandler } from './loghandler.js';
+import { levels, logEverything, LogLevel, LogLevelName, logNothing } from './loglevel.js';
+import { LogRecord } from './logrecord.js';
+import { resetLoggers } from './testing-utils.spec.js';
 
 describe('Logger', () => {
     let records: LogRecord[];
@@ -267,10 +268,3 @@ describe('Logger', () => {
     });
 });
 
-export function resetLoggers() {
-    const root = Logger.get('');
-    for (const child of Object.keys(root.childLoggers)) {
-        delete root.childLoggers[child];
-    }
-    root.level = LogLevel.info;
-}
