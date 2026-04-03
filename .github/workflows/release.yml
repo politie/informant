@@ -5,26 +5,22 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: 18.x
+  NODE_VERSION: 24.x
 
 jobs:
   bump-version:
     name: Bump package.json Version
     if: ${{ !startsWith(github.event.head_commit.message, '[CI/CD]') }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     outputs:
       tag-name: ${{ steps.bump.outputs.newTag }}
 
     steps:
       - uses: actions/checkout@v4
         with:
-          # This is a fine-grained Github personal access token
-          # for resource owner "politie" (needs admin approval)
-          # and only repository "politie/informant"
-          # with the following "Repository permissions":
-          # - "Contents" (Access: Read and write),
-          # - "Metadata" (Access: Read-only, this is mandatory).
-          token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Bump version
         id: bump
@@ -54,6 +50,8 @@ jobs:
     needs: bump-version
     if: startsWith(needs.bump-version.outputs.tag-name, 'v')
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -71,13 +69,5 @@ jobs:
       - name: Build
         run: npm run prepack
 
-      - name: Add token to .npmrc
-        env:
-          # This is a granular NPM access token
-          # with "Packages and scopes" permission (Access: Read and write)
-          # for the "@politie/informant" package only.
-          npmToken: ${{ secrets.WORKFLOW_NPM_TOKEN }}
-        run: echo "//registry.npmjs.org/:_authToken=$npmToken" >> .npmrc
-        
       - name: Release
         run: npm publish
