@@ -12,15 +12,19 @@ jobs:
     name: Bump package.json Version
     if: ${{ !startsWith(github.event.head_commit.message, '[CI/CD]') }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       tag-name: ${{ steps.bump.outputs.newTag }}
 
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # This is a fine-grained Github personal access token
+          # for resource owner "politie" (needs admin approval)
+          # and only repository "politie/informant"
+          # with the following "Repository permissions":
+          # - "Contents" (Access: Read and write),
+          # - "Metadata" (Access: Read-only, this is mandatory).
+          token: ${{ secrets.WORKFLOW_GITHUB_TOKEN }}
 
       - name: Bump version
         id: bump
@@ -51,6 +55,8 @@ jobs:
     if: startsWith(needs.bump-version.outputs.tag-name, 'v')
     runs-on: ubuntu-latest
     permissions:
+      # This workflow is configured in NPM as a trusted publisher.
+      # The id-token permission allows the workflow to publish to NPM.
       id-token: write
 
     steps:
